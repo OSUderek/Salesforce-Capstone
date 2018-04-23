@@ -203,6 +203,45 @@ global class EmailParser implements Messaging.InboundEmailHandler {
                 //return the result and exit the program
                 return result;
             }
+            //create a new case object
+            Contact newCaseContact = new Contact();
+            
+            //fill in the first name
+            newCaseContact.FirstName = firstNameOfContact2;  
+            
+            //fill in the last name
+            newCaseContact.LastName = lastNameOfContact2;
+            
+            //insert the new contact into the database with the first and the last name
+            insert newCaseContact; 
+            
+            //create a new case object
+            Case emailToCase = new Case();
+            
+            //fill in the subject line of the case, in this case it's the name of the device and then the static string below
+            emailToCase.Subject = nameOfLocation2 + ', has detected a leak!'; 
+            
+            //fill in the description of the case with all of the text from the email
+            emailToCase.Description = myPlainText;
+            
+            //specify that the case was created from an email
+            emailToCase.Origin = 'Email';
+            
+            //link the new contact to the new case
+            emailToCase.ContactId = newCaseContact.id;
+            
+            //set the priority level to high because there is a water leak somewhere
+            emailToCase.Priority = 'High';
+            
+            //insert the case into the database
+            insert emailToCase;
+            
+            //set the result to true because the case was successfully created from the email
+            result.success = true;
+            
+            //return the result and exit the program
+            return result;
+    
         } else if ((myPlainText.contains('Lyric')) && myPlainText.contains('Honeywell') && myPlainText.contains('Resolved')) {
 
              //Do some hard coded parsing to pull the first name and last name out of the email
